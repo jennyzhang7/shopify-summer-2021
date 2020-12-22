@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -11,24 +11,40 @@ import {
   Spinner,
 } from "@shopify/polaris";
 import { SearchMinor } from "@shopify/polaris-icons";
+import Confetti from "react-confetti";
 
 export default function App() {
+  const url = new URL(window.location.href);
   const [searchFieldValue, setSearchFieldValue] = useState("");
   const [searchTitle, setSearchTitle] = useState("");
   const [results, setResults] = useState([]);
-  const [nominations, setNominations] = useState(JSON.parse(localStorage.getItem('nominations')) || []);
+  const [nominations, setNominations] = useState(
+    JSON.parse(localStorage.getItem("nominations")) || []
+  );
   const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const searchValue = url.searchParams.get("search");
+    if (searchValue) {
+      fetchMovies(searchValue);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const fetchMovies = (movieName) => {
     setLoading(true);
     setSearchTitle(movieName);
-    fetch(`https://www.omdbapi.com/?s=${movieName}&apikey=${process.env.REACT_APP_OMDB_API_KEY}`)
+    fetch(
+      `https://www.omdbapi.com/?s=${movieName}&apikey=${process.env.REACT_APP_OMDB_API_KEY}`
+    )
       .then((response) => response.json())
       .then((data) => {
+        url.searchParams.set("search", movieName);
+        window.history.pushState("", "The Shoppies", url.href);
         setLoading(false);
         if (data.Search) {
           setResults(data.Search);
         } else {
-          setResults([])
+          setResults([]);
         }
       });
   };
@@ -43,17 +59,22 @@ export default function App() {
     const { Title, Year, imdbID } = movie;
     const newNominations = [...nominations, { Title, Year, imdbID }];
     setNominations(newNominations);
-    localStorage.setItem('nominations', JSON.stringify(newNominations));
+    localStorage.setItem("nominations", JSON.stringify(newNominations));
   };
 
   const removeMovie = (idx) => {
-    setNominations(
-      nominations.filter((_, nominationIdx) => nominationIdx !== idx)
+    const newNominations = nominations.filter(
+      (_, nominationIdx) => nominationIdx !== idx
     );
+    setNominations(newNominations);
+    localStorage.setItem("nominations", JSON.stringify(newNominations));
   };
 
   const shouldBeDisabled = (movie) => {
-    return nominations.length === 5 || nominations.some((nomination) => nomination.imdbID === movie.imdbID);
+    return (
+      nominations.length === 5 ||
+      nominations.some((nomination) => nomination.imdbID === movie.imdbID)
+    );
   };
 
   return (
@@ -64,7 +85,10 @@ export default function App() {
           description="Customize the style of your checkout"
         >
           {nominations.length >= 5 && (
-            <Banner title="YAY YOU HAVE 5 NOMINATIONS" status="success" />
+            <>
+              <Confetti />
+              <Banner title="YAY YOU HAVE 5 NOMINATIONS" status="success" />
+            </>
           )}
         </Layout.Section>
         <Layout.Section title="Search" description="Search for movies">
@@ -85,7 +109,13 @@ export default function App() {
           </Card>
         </Layout.Section>
         <Layout.Section oneHalf>
-          <Card title={searchTitle.length > 0 ? `Results for "${searchTitle}"` : "Please search for a movie title and press 'Enter'"}>
+          <Card
+            title={
+              searchTitle.length > 0
+                ? `Results for "${searchTitle}"`
+                : "Please search for a movie title and press 'Enter'"
+            }
+          >
             <Card.Section>
               {loading ? (
                 <Spinner
@@ -107,7 +137,9 @@ export default function App() {
                       </Button>
                     </List.Item>
                   ))}
-                  {searchTitle.length > 0 && results.length === 0 && "No results found."}
+                  {searchTitle.length > 0 &&
+                    results.length === 0 &&
+                    "No results found."}
                 </List>
               )}
             </Card.Section>
@@ -125,7 +157,8 @@ export default function App() {
                     </Button>
                   </List.Item>
                 ))}
-                {nominations.length === 0 && "Your nominations will appear here."}
+                {nominations.length === 0 &&
+                  "Your nominations will appear here."}
               </List>
             </Card.Section>
           </Card>
