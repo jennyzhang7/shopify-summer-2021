@@ -1,20 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "@shopify/polaris/dist/styles.css";
-import { AppProvider, FooterHelp, Link } from "@shopify/polaris";
-import enTranslations from "@shopify/polaris/locales/en.json";
-
+import Header from "./Header";
 import App from "./App";
+import Footer from "./Footer";
 
+var sectionStyle = {
+  // backgroundImage: `url(${Background})`,
+  // backgroundRepeat: "repeat-y",
+  // backgroundSize: "100%",
+  height: "100%",
+  backgroundColor: "#f5f3f4",
+  // background: "linear-gradient(90deg, #f5f3f4 50%, #1d3557 50%)",
+};
 function WrappedApp() {
   return (
-    <AppProvider i18n={enTranslations}>
+    <div style={sectionStyle}>
+      <Header title="SHOPPIES" />
       <App />
-      <FooterHelp>
-        Created by Jenny Zhang, learn more about me {" "}
-        <Link url="https://jennyz.dev">here.</Link>
-      </FooterHelp>
-    </AppProvider>
+      <Footer/>
+    </div>
   );
 }
 
