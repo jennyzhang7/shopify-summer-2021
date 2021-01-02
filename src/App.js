@@ -12,6 +12,7 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
+import Confetti from "react-confetti";
 import "./App.css";
 
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -26,7 +27,6 @@ export default function App() {
   const [nominations, setNominations] = useState(
     JSON.parse(localStorage.getItem("nominations")) || []
   );
-  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const searchValue = url.searchParams.get("search");
     if (searchValue) {
@@ -36,7 +36,6 @@ export default function App() {
   }, []);
 
   const fetchMovies = (movieName) => {
-    setLoading(true);
     setSearchTitle(movieName);
     fetch(
       `https://www.omdbapi.com/?s=${movieName}&apikey=${process.env.REACT_APP_OMDB_API_KEY}`
@@ -45,7 +44,6 @@ export default function App() {
       .then((data) => {
         url.searchParams.set("search", movieName);
         window.history.pushState("", "The Shoppies", url.href);
-        setLoading(false);
         if (data.Search) {
           setResults(data.Search);
         } else {
@@ -96,6 +94,7 @@ export default function App() {
     cardMedia: {
       width: 100,
       margin: 10,
+      cursor: "pointer",
     },
     media: {
       height: 200,
@@ -136,9 +135,14 @@ export default function App() {
       <CssBaseline />
       <Container maxWidth="lg">
         <div class="banner">
-        {nominations.length >= 5 && (
-          <Alert className="test" severity="success">YAY You have 5 nominations</Alert>
-        )}
+          {nominations.length >= 5 && (
+            <>
+              <Confetti />
+              <Alert className="test" severity="success">
+                YAY!! 🥳🥳 You have 5 nominations! 🎉🎉
+              </Alert>
+            </>
+          )}
         </div>
 
         <Grid container spacing={10}>
@@ -170,10 +174,17 @@ export default function App() {
 
             <Card>
               <Typography className={classes.resultsText} gutterBottom>
-                {searchTitle.length > 0
-                  ? `Results for "${searchTitle}"`
-                  : "Please search for a movie title and press 'Enter'"}
+                {(() => {
+                  if (searchTitle.length === 0) {
+                    return "Please search for a movie title and press 'Enter'";
+                  }
+                  if (results.length > 0) {
+                    return `Results for "${searchTitle}"`;
+                  }
+                  return "No results found.";
+                })()}
               </Typography>
+
               {results.map((movie, idx) => (
                 <>
                   <Card key={`movie-${idx}`} className={classes.card}>
@@ -181,6 +192,12 @@ export default function App() {
                       className={classes.cardMedia}
                       image={movie.Poster}
                       title={movie.Title}
+                      onClick={() =>
+                        window.open(
+                          `https://imdb.com/title/${movie.imdbID}`,
+                          "_blank"
+                        )
+                      }
                     />
                     <div className={classes.cardDetails}>
                       <CardContent>
@@ -190,6 +207,7 @@ export default function App() {
                         </Typography>
                       </CardContent>
                     </div>
+
                     <div style={style}>
                       <Button
                         variant="outlined"
@@ -208,14 +226,17 @@ export default function App() {
           </Grid>
           <Grid item md={6}>
             <div class="heading">
-              <h1>Nominations</h1>
+              <h1>Nominations ({nominations.length} / 5)</h1>
             </div>
             <Grid container spacing={1}>
               <Grid container item xs={12} spacing={3}>
                 {nominations.map((nomination, idx) => (
                   <Grid item key={`nomination-${idx}`} xs={4}>
                     <Card className={classes.root}>
-                      <CardActionArea>
+                      <CardActionArea
+                        href={`https://imdb.com/title/${nomination.imdbID}`}
+                        target="_blank"
+                      >
                         <CardMedia
                           className={classes.media}
                           image={nomination.Poster}

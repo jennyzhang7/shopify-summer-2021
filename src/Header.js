@@ -5,7 +5,7 @@ import "./Header.css";
 export default function Header(props) {
   const { title } = props;
   return (
-    <React.Fragment>
+    <>
       <div class="headerSection">
         <Toolbar>
           <div class="logo">
@@ -13,6 +13,6 @@ export default function Header(props) {
           </div>
         </Toolbar>
       </div>
-    </React.Fragment>
+    </>
   );
 }

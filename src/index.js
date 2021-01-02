@@ -4,14 +4,11 @@ import Header from "./Header";
 import App from "./App";
 import Footer from "./Footer";
 
-var sectionStyle = {
-  // backgroundImage: `url(${Background})`,
-  // backgroundRepeat: "repeat-y",
-  // backgroundSize: "100%",
+const sectionStyle = {
   height: "100%",
   backgroundColor: "#f5f3f4",
-  // background: "linear-gradient(90deg, #f5f3f4 50%, #1d3557 50%)",
 };
+
 function WrappedApp() {
   return (
     <div style={sectionStyle}>
