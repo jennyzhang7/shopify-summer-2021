@@ -7,17 +7,18 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Container from "@material-ui/core/Container";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import React, { useEffect, useState } from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
+import SearchIcon from "@material-ui/icons/Search";
+import Alert from "@material-ui/lab/Alert";
+import React, { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 import "./App.css";
 
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
-import MuiAlert from "@material-ui/lab/Alert";
+const MAX_NOMINATIONS = 5;
 
 export default function App() {
   const url = new URL(window.location.href);
@@ -75,7 +76,7 @@ export default function App() {
 
   const shouldBeDisabled = (movie) => {
     return (
-      nominations.length === 5 ||
+      nominations.length === MAX_NOMINATIONS ||
       nominations.some((nomination) => nomination.imdbID === movie.imdbID)
     );
   };
@@ -112,7 +113,11 @@ export default function App() {
       fontSize: 17,
       margin: 10,
     },
-    nominateButton: {},
+    nominateButton: {
+      display: "flex",
+      height: 20,
+      margin: 20,
+    },
     banner: {
       width: "100%",
       "& > * + *": {
@@ -121,25 +126,16 @@ export default function App() {
     },
   }));
   const classes = useStyles();
-
-  const style = {
-    display: "flex",
-    height: 20,
-    margin: 20,
-  };
-  function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }
   return (
     <>
       <CssBaseline />
       <Container maxWidth="lg">
-        <div class="banner">
-          {nominations.length >= 5 && (
+        <div className="banner">
+          {nominations.length >= MAX_NOMINATIONS && (
             <>
               <Confetti />
-              <Alert className="test" severity="success">
-                YAY!! 🥳🥳 You have 5 nominations! 🎉🎉
+              <Alert className="test" elevation={6} variant="filled" severity="success">
+                YAY!! 🥳🥳 You have {MAX_NOMINATIONS} nominations! 🎉🎉
               </Alert>
             </>
           )}
@@ -147,7 +143,7 @@ export default function App() {
 
         <Grid container spacing={10}>
           <Grid item md={6}>
-            <div class="heading">
+            <div className="heading">
               <h1>Search</h1>
             </div>
             <Card style={{ marginBottom: 12 }}>
@@ -163,10 +159,9 @@ export default function App() {
                       </InputAdornment>
                     ),
                   }}
-                  onChange={(change) => {
-                    console.log(change.target.value);
-                    setSearchFieldValue(change.target.value);
-                  }}
+                  onChange={(change) =>
+                    setSearchFieldValue(change.target.value)
+                  }
                   value={searchFieldValue}
                 />
               </div>
@@ -207,8 +202,7 @@ export default function App() {
                         </Typography>
                       </CardContent>
                     </div>
-
-                    <div style={style}>
+                    <div className={classes.nominateButton}>
                       <Button
                         variant="outlined"
                         size="medium"
@@ -225,13 +219,12 @@ export default function App() {
             </Card>
           </Grid>
           <Grid item md={6}>
-            <div class="heading">
-              <h1>Nominations ({nominations.length} / 5)</h1>
+            <div className="heading">
+              <h1>Nominations ({nominations.length} / {MAX_NOMINATIONS})</h1>
             </div>
-            <Grid container spacing={1}>
               <Grid container item xs={12} spacing={3}>
                 {nominations.map((nomination, idx) => (
-                  <Grid item key={`nomination-${idx}`} xs={4}>
+                  <Grid item key={`nomination-${idx}`} xs={12} md={4}>
                     <Card className={classes.root}>
                       <CardActionArea
                         href={`https://imdb.com/title/${nomination.imdbID}`}
@@ -268,8 +261,6 @@ export default function App() {
                   </Grid>
                 ))}
               </Grid>
-              <Grid container item xs={12} spacing={3}></Grid>
-            </Grid>
           </Grid>
         </Grid>
       </Container>

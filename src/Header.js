@@ -6,9 +6,9 @@ export default function Header(props) {
   const { title } = props;
   return (
     <>
-      <div class="headerSection">
+      <div className="headerSection">
         <Toolbar>
-          <div class="logo">
+          <div className="logo">
             <h1>{title}</h1>
           </div>
         </Toolbar>

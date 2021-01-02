@@ -9,8 +9,8 @@ import popcorn from "./popcorn.png";
 
 export default function Footer(props) {
   return (
-    <>
-      <div class="info">
+    <footer>
+      <div className="info">
         <Container maxWidth="lg">
           <Typography variant="h6" align="center" gutterBottom>
             Thanks for checking this out!
@@ -21,12 +21,12 @@ export default function Footer(props) {
           </WhiteTextTypography>
         </Container>
       </div>
-      <div class="background">
+      <div className="background">
         <Toolbar>
           <img src={popcorn} alt="popcorn"></img>
         </Toolbar>
       </div>
-    </>
+    </footer>
   );
 }
 
