@@ -17,6 +17,8 @@ import Alert from "@material-ui/lab/Alert";
 import React, { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 import "./App.css";
+import hulahoop from "./hulahoop.gif";
+import dance from "./dance.gif";
 
 const MAX_NOMINATIONS = 5;
 
@@ -134,9 +136,24 @@ export default function App() {
           {nominations.length >= MAX_NOMINATIONS && (
             <>
               <Confetti />
-              <Alert className="test" elevation={6} variant="filled" severity="success">
-                YAY!! 🥳🥳 You have {MAX_NOMINATIONS} nominations! 🎉🎉
-              </Alert>
+              <Grid container item xs={12} spacing={3}>
+                <Grid item md={3}>
+                  <img src={dance} alt="dance"></img>
+                </Grid>
+                <Grid item md={6}>
+                  <Alert
+                    className="test"
+                    elevation={6}
+                    variant="filled"
+                    severity="success"
+                  >
+                    YAY!! 🥳🥳 You have {MAX_NOMINATIONS} nominations! 🎉🎉
+                  </Alert>
+                </Grid>
+                <Grid item md={3}>
+                  <img src={hulahoop} alt="hulahoop"></img>
+                </Grid>
+              </Grid>
             </>
           )}
         </div>
@@ -220,47 +237,49 @@ export default function App() {
           </Grid>
           <Grid item md={6}>
             <div className="heading">
-              <h1>Nominations ({nominations.length} / {MAX_NOMINATIONS})</h1>
+              <h1>
+                Nominations ({nominations.length} / {MAX_NOMINATIONS})
+              </h1>
             </div>
-              <Grid container item xs={12} spacing={3}>
-                {nominations.map((nomination, idx) => (
-                  <Grid item key={`nomination-${idx}`} xs={12} md={4}>
-                    <Card className={classes.root}>
-                      <CardActionArea
-                        href={`https://imdb.com/title/${nomination.imdbID}`}
-                        target="_blank"
-                      >
-                        <CardMedia
-                          className={classes.media}
-                          image={nomination.Poster}
-                          title={nomination.Title}
-                        />
-                        <CardContent>
-                          <Typography>{nomination.Title}</Typography>
-                          <Typography
-                            gutterBottom
-                            variant="subtitle1"
-                            color="textSecondary"
-                          >
-                            {nomination.Year}
-                          </Typography>
-                        </CardContent>
-                      </CardActionArea>
-                      <CardActions>
-                        <Button
-                          color="secondary"
-                          size="medium"
-                          className={classes.nominationButton}
-                          startIcon={<DeleteIcon />}
-                          onClick={() => removeMovie(idx)}
+            <Grid container item xs={12} spacing={3}>
+              {nominations.map((nomination, idx) => (
+                <Grid item key={`nomination-${idx}`} xs={12} md={4}>
+                  <Card className={classes.root}>
+                    <CardActionArea
+                      href={`https://imdb.com/title/${nomination.imdbID}`}
+                      target="_blank"
+                    >
+                      <CardMedia
+                        className={classes.media}
+                        image={nomination.Poster}
+                        title={nomination.Title}
+                      />
+                      <CardContent>
+                        <Typography>{nomination.Title}</Typography>
+                        <Typography
+                          gutterBottom
+                          variant="subtitle1"
+                          color="textSecondary"
                         >
-                          Remove
-                        </Button>
-                      </CardActions>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
+                          {nomination.Year}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                    <CardActions>
+                      <Button
+                        color="secondary"
+                        size="medium"
+                        className={classes.nominationButton}
+                        startIcon={<DeleteIcon />}
+                        onClick={() => removeMovie(idx)}
+                      >
+                        Remove
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
         </Grid>
       </Container>
